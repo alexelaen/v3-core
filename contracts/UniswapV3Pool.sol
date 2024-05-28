@@ -74,7 +74,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     Slot0 public override slot0;
 
     /// @inheritdoc IUniswapV3PoolState
-    uint256 public override feeGrowthGlobal0X128;
+    uint256 public override feeGrowthGlobal0X128;//mike global
     /// @inheritdoc IUniswapV3PoolState
     uint256 public override feeGrowthGlobal1X128;
 
@@ -87,7 +87,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     ProtocolFees public override protocolFees;
 
     /// @inheritdoc IUniswapV3PoolState
-    uint128 public override liquidity;
+    uint128 public override liquidity;//mike
 
     /// @inheritdoc IUniswapV3PoolState
     mapping(int24 => Tick.Info) public override ticks;
@@ -358,7 +358,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                     params.liquidityDelta
                 );
 
-                liquidity = LiquidityMath.addDelta(liquidityBefore, params.liquidityDelta);
+                liquidity = LiquidityMath.addDelta(liquidityBefore, params.liquidityDelta);//mike put new liquidity into use instantly
             } else {
                 // current tick is above the passed range; liquidity can only become in range by crossing from right to
                 // left, when we'll need _more_ token1 (it's becoming more valuable) so user must provide it
@@ -435,11 +435,11 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 tickBitmap.flipTick(tickUpper, tickSpacing);
             }
         }
-
+        //mike get feeGrowth based on current tick and position's lower upper tick
         (uint256 feeGrowthInside0X128, uint256 feeGrowthInside1X128) =
             ticks.getFeeGrowthInside(tickLower, tickUpper, tick, _feeGrowthGlobal0X128, _feeGrowthGlobal1X128);
 
-        position.update(liquidityDelta, feeGrowthInside0X128, feeGrowthInside1X128);
+        position.update(liquidityDelta, feeGrowthInside0X128, feeGrowthInside1X128);//mike record this position's fee state before delta liquidity added
 
         // clear any tick data that is no longer needed
         if (liquidityDelta < 0) {
@@ -456,7 +456,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     /// @dev noDelegateCall is applied indirectly via _modifyPosition
     function mint(
         address recipient,
-        int24 tickLower,
+        int24 tickLower,//mike tickLower is smaller than tickUpper
         int24 tickUpper,
         uint128 amount,
         bytes calldata data
@@ -639,7 +639,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
 
         // continue swapping as long as we haven't used the entire input/output and haven't reached the price limit
         while (state.amountSpecifiedRemaining != 0 && state.sqrtPriceX96 != sqrtPriceLimitX96) {
-            StepComputations memory step;
+            StepComputations memory step;//mike one time use
 
             step.sqrtPriceStartX96 = state.sqrtPriceX96;
 
@@ -660,6 +660,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
             step.sqrtPriceNextX96 = TickMath.getSqrtRatioAtTick(step.tickNext);
 
             // compute values to swap to the target tick, price limit, or point where input/output amount is exhausted
+            //mike fee amount
             (state.sqrtPriceX96, step.amountIn, step.amountOut, step.feeAmount) = SwapMath.computeSwapStep(
                 state.sqrtPriceX96,
                 (zeroForOne ? step.sqrtPriceNextX96 < sqrtPriceLimitX96 : step.sqrtPriceNextX96 > sqrtPriceLimitX96)

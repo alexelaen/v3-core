@@ -14,10 +14,10 @@ library Position {
         // the amount of liquidity owned by this position
         uint128 liquidity;
         // fee growth per unit of liquidity as of the last update to liquidity or fees owed
-        uint256 feeGrowthInside0LastX128;
+        uint256 feeGrowthInside0LastX128;//mike
         uint256 feeGrowthInside1LastX128;
         // the fees owed to the position owner in token0/token1
-        uint128 tokensOwed0;
+        uint128 tokensOwed0;//mike fees owe to this position
         uint128 tokensOwed1;
     }
 
@@ -76,7 +76,7 @@ library Position {
             );
 
         // update the position
-        if (liquidityDelta != 0) self.liquidity = liquidityNext;
+        if (liquidityDelta != 0) self.liquidity = liquidityNext;//mike update liquidity to latest amount
         self.feeGrowthInside0LastX128 = feeGrowthInside0X128;
         self.feeGrowthInside1LastX128 = feeGrowthInside1X128;
         if (tokensOwed0 > 0 || tokensOwed1 > 0) {

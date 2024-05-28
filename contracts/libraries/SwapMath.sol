@@ -22,7 +22,7 @@ library SwapMath {
         uint160 sqrtRatioCurrentX96,
         uint160 sqrtRatioTargetX96,
         uint128 liquidity,
-        int256 amountRemaining,
+        int256 amountRemaining,//mike user's remaining amount to swap
         uint24 feePips
     )
         internal
